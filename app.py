@@ -5,10 +5,17 @@ import json
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route('/', methods=['GET', 'POST'])
-@cross_origin(origin='localhost', headers=['Content- Type', 'Authorization'])
+@app.route('/')
 def index():
+    return jsonify({
+        "status_code": 200,
+        "result": "Welcome to the unofficial Salty Teemo REST API!"
+    })
+
+@app.route('/live-data', methods=['GET', 'POST'])
+def live_data():
     data = {}
+    log_file = 'data/liveDataCurrent.json'
 
     # POST requests
     if request.method == 'POST':
@@ -16,8 +23,8 @@ def index():
         data = request.get_json()
 
         # Write json to file
-        with open('output.json', 'w+') as outfile:
-            json.dump(data, outfile)
+        with open(log_file, 'w+') as out_file:
+            json.dump(data, out_file)
 
         # Return the new data, indicating the POST was successful
         return jsonify({
@@ -28,7 +35,7 @@ def index():
     # GET requests
     elif request.method == 'GET':
         # Read data from file
-        with open('output.json', 'r+') as json_file:
+        with open(log_file, 'r+') as json_file:
             try:
                 data = json.load(json_file)
             except Exception as e:

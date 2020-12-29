@@ -1,0 +1,15 @@
+{
+    "timestamp_latest_update": "000-000-000",
+    "blue": {
+        "bets": 0,
+        "mushrooms": 0
+    },
+    "red": {
+        "bets": 0,
+        "mushrooms": 0
+    },
+    "total": {
+        "bets": 0,
+        "mushrooms": 0
+    }
+}
