@@ -5,37 +5,46 @@
 
 <body>
     <div class="container">
-        <h1>Live Salty Teemo Stats</h1>
+        <section id="header">
+            <h1>Live Salty Teemo Stats</h1>
 
-        {% if stats['betting_is_open'] %}
+            {% if stats['betting_is_open'] %}
             <h3 id="open-status">Betting is OPEN</h3>
-        {% else %}
+            {% else %}
             <h3 id="open-status">Betting is CLOSED</h3>
-        {% endif %}
+            {% endif %}
+        </section>
 
-        <p>Blue</p>
+        <div id="tug-of-war" class="flex-horizontal">
+            <div id="blue-side"></div>
+            <div id="red-side"></div>
+        </div>
 
-        <ul>
-            {% for key, value in stats['blue'].items() %}
-                <li>{{key}}{{value}}</li>
-            {% endfor %}
-        </ul>
+        <section id="red-blue-stats" class="flex-horizontal">
+            <p class="section-title">Blue</p>
+            <div id="blue-stats" class="flex-horizontal">
+                <div class="flex-vertical">
+                    <p class="top">Bets</p>
+                    <p class="bottom">{{stats['blue']['bets']}}</p>
+                </div>
+                <div class="flex-vertical">
+                    <p class="top">Mushrooms</p>
+                    <p class="bottom">{{stats['blue']['mushrooms']}}</p>
+                </div>
+            </div>
 
-        <p>Red</p>
-
-        <ul>
-            {% for key, value in stats['red'].items() %}
-                <li>{{key}}{{value}}</li>
-            {% endfor %}
-        </ul>
-
-        <p>Totals</p>
-
-        <ul>
-            {% for key, value in stats['total'].items() %}
-                <li>{{key}}{{value}}</li>
-            {% endfor %}
-        </ul>
+            <p class="section-title">Red</p>
+            <div id="red-stats" class="flex-horizontal">
+                <div class="flex-vertical">
+                    <p class="top">Bets</p>
+                    <p class="bottom">{{stats['red']['bets']}}</p>
+                </div>
+                <div class="flex-vertical">
+                    <p class="top">Mushrooms</p>
+                    <p class="bottom">{{stats['red']['mushrooms']}}</p>
+                </div>
+            </div>
+        </section>
     </div>
 </body>
 
@@ -43,8 +52,26 @@
 * {
     --background-surface: #0e0e10;
     --background-main: #18181b;
+    --background-blue: #30a9de;
+    --background-red: #e53a40;
     --font-color-light: #efeff1;
     --font-color-highlight: #a970ff;
+}
+
+.flex-horizontal {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-flow: row wrap;
+    align-items: stretch;
+}
+
+.flex-vertical {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex-flow: column wrap;
+    align-items: stretch;
 }
 
 body {
@@ -57,19 +84,70 @@ body {
 
 body * {
     color: var(--font-color-light);
-    font-family: Inter, Roobert, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 1.1em;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 div.container {
     width: 50%;
-    height: 100%;
-    margin: auto;
+    margin: 100px auto 0 auto;
 }
 
-ul {
-    list-style: none;
+#header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 60px;
+    background: var(--background-surface);
+    box-shadow: 0 1px 5px #000;
+    z-index: 99999;
 }
+
+#tug-of-war {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    left: 0;
+    height: 16px;
+    z-index: 1000;
+}
+
+#tug-of-war #blue-side,
+#tug-of-war #red-side {
+    flex-grow: 1;
+}
+
+#tug-of-war #blue-side {
+    background: var(--background-blue);
+}
+
+#tug-of-war #red-side {
+    background: var(--background-red);
+}
+
+#red-blue-stats {
+    width: 100%;
+}
+
+#blue-stats,
+#red-stats {
+    width: 50%;
+    flex-grow: 1;
+}
+
+#blue-stats {
+
+}
+
+#red-stats {
+
+}
+
+.section-title {
+    padding: 0;
+    font-weight: bold;
+}
+
 
 @media screen and (max-width: 600px) {
     div.container {
