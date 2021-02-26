@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import json
-from jinja2 import Template
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -28,8 +27,7 @@ def index():
 
 @app.route('/test')
 def test():
-    template = Template('Hello {{ name }}!')
-    template.render(name='John Doe')
+    return render_template('template.html', my_string="Wheeeee!", my_list=[0,1,2,3,4,5])
 
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():
