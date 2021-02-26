@@ -3,11 +3,11 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 import json
 
+# Flask setup
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
-# Global data object
+# Global variables
 data = {}
 log_file = 'data/liveDataCurrent.json'
 
@@ -25,9 +25,9 @@ def index():
         "result": "Welcome to the unofficial Salty Teemo REST API!"
     })
 
-@app.route('/test')
+@app.route('/live')
 def test():
-    return render_template('template.html', my_string="Wheeeee!", my_list=[0,1,2,3,4,5])
+    return render_template('live.html', stats=data['live_stats'])
 
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():

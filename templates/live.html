@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Flask Template Example</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <style type="text/css">
+        .container {
+            max-width: 500px;
+            padding-top: 100px;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            {% if stats['betting_is_open'] %}
+                <label>OPEN</label>
+            {% else %}
+                <label>CLOSED</label>
+            {% endif %}
+
+            <label>Blue</label>
+            <ul>
+                {% for key, value in stats['blue'].items() %}
+                    <li>{{key}} - {{value}}</li>
+                {% endfor %}
+            </ul>
+
+            <label>Red</label>
+            <ul>
+                {% for key, value in stats['red'].items() %}
+                    <li>{{key}} - {{value}}</li>
+                {% endfor %}
+            </ul>
+
+            <label>Totals</label>
+            <ul>
+                {% for key, value in stats['total'].items() %}
+                    <li>{{key}} - {{value}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </body>
+</html>
