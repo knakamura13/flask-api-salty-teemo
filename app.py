@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
+from datetime import datetime
 import json
 
 app = Flask(__name__)
@@ -48,7 +49,7 @@ def live_data():
             if 'total' in stats.keys():
                 data['live_stats']['total'] = stats['total']
 
-        data['live_stats']['latest_update'] = '000-111-000'
+        data['live_stats']['latest_update'] = getCurrentDatetimeStr()
         data['status'] = status
 
         # Write json to file
@@ -60,18 +61,20 @@ def live_data():
     # POST requests
     elif request.method == 'POST':
         # Get the json from the POST request
-        req = request.get_json()
+        req = request.get_json(force=True)
+        data = req
+        status = 201
+
+        data['status'] = status
+
+        data['live_stats']['latest_update'] = getCurrentDatetimeStr()
 
         # Write json to file
         with open(log_file, 'w+') as out_file:
-            json.dump(req, out_file)
+            json.dump(data, out_file)
 
         # Return the new data, indicating the POST was successful
-        status = 201
-        return jsonify({
-            "status_code": status,
-            "data": req
-        }), status
+        return jsonify(data), status
 
     # GET requests
     elif request.method == 'GET':
@@ -84,14 +87,14 @@ def live_data():
 
                 # Return an error with code 500
                 status = 500
-                return jsonify({
-                    "status_code": status,
-                    "result": data
-                }), status
+                return jsonify(data), status
 
         # Return the contents of the json file, indicating the GET was successful
         status = 200
-        return jsonify({
-            "status_code": status,
-            "data": data
-        }), status
+        return jsonify(data), status
+
+
+def getCurrentDatetimeStr():
+    now = datetime.now()
+    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
+    return formatted
