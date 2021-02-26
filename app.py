@@ -33,7 +33,7 @@ def live_data():
     # PUT requests
     if request.method == 'PUT':
         # Get the json from the PUT request
-        req = request.get_json()
+        req = request.get_json(force=True)
         status = 201
 
         # Check each property to see what the PUT request is updating
