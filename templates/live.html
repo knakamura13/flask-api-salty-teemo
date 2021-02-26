@@ -1,46 +1,79 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Flask Template Example</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
-        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-        <style type="text/css">
-        .container {
-            max-width: 500px;
-            padding-top: 100px;
-        }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            {% if stats['betting_is_open'] %}
-                <label>OPEN</label>
-            {% else %}
-                <label>CLOSED</label>
-            {% endif %}
+<title>Live Stats</title>
 
-            <label>Blue</label>
-            <ul>
-                {% for key, value in stats['blue'].items() %}
-                    <li>{{key}} - {{value}}</li>
-                {% endfor %}
-            </ul>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 
-            <label>Red</label>
-            <ul>
-                {% for key, value in stats['red'].items() %}
-                    <li>{{key}} - {{value}}</li>
-                {% endfor %}
-            </ul>
+<body>
+    <div class="container">
+        <h1>Live Salty Teemo Stats</h1>
 
-            <label>Totals</label>
-            <ul>
-                {% for key, value in stats['total'].items() %}
-                    <li>{{key}} - {{value}}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </body>
-</html>
+        {% if stats['betting_is_open'] %}
+            <h3 id="open-status">Betting is OPEN</h3>
+        {% else %}
+            <h3 id="open-status">Betting is CLOSED</h3>
+        {% endif %}
+
+        <p>Blue</p>
+
+        <ul>
+            {% for key, value in stats['blue'].items() %}
+                <li>{{key}}{{value}}</li>
+            {% endfor %}
+        </ul>
+
+        <p>Red</p>
+
+        <ul>
+            {% for key, value in stats['red'].items() %}
+                <li>{{key}}{{value}}</li>
+            {% endfor %}
+        </ul>
+
+        <p>Totals</p>
+
+        <ul>
+            {% for key, value in stats['total'].items() %}
+                <li>{{key}}{{value}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+<style type="text/css">
+* {
+    --background-surface: #0e0e10;
+    --background-main: #18181b;
+    --font-color-light: #efeff1;
+    --font-color-highlight: #a970ff;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--background-main);
+}
+
+body * {
+    color: var(--font-color-light);
+    font-family: Inter, Roobert, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 1.1em;
+}
+
+div.container {
+    width: 50%;
+    height: 100%;
+    margin: auto;
+}
+
+ul {
+    list-style: none;
+}
+
+@media screen and (max-width: 600px) {
+    div.container {
+        width: 90%;
+    }
+}
+</style>
