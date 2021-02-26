@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import json
+from jinja2 import Template
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -24,6 +25,11 @@ def index():
         "status_code": 200,
         "result": "Welcome to the unofficial Salty Teemo REST API!"
     })
+
+@app.route('/test')
+def test():
+    template = Template('Hello {{ name }}!')
+    template.render(name='John Doe')
 
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():
