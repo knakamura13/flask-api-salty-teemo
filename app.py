@@ -8,6 +8,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Global data object
 data = {}
+log_file = 'data/liveDataCurrent.json'
 
 # Read data from file
 with open(log_file, 'r') as json_file:
@@ -25,10 +26,9 @@ def index():
 
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():
-    global data
+    global data, log_file
 
     status = 500
-    log_file = 'data/liveDataCurrent.json'
 
     # PUT requests
     if request.method == 'PUT':
