@@ -21,27 +21,33 @@
         </div>
 
         <section id="red-blue-stats" class="flex-horizontal">
-            <p class="section-title">Blue</p>
             <div id="blue-stats" class="flex-horizontal">
                 <div class="flex-vertical">
-                    <p class="top">Bets</p>
-                    <p class="bottom">{{stats['blue']['bets']}}</p>
-                </div>
-                <div class="flex-vertical">
-                    <p class="top">Mushrooms</p>
-                    <p class="bottom">{{stats['blue']['mushrooms']}}</p>
+                    <p class="section-title">Blue</p>
+
+                    <div class="flex-vertical">
+                        <p class="top">Bets</p>
+                        <p class="bottom">{{stats['blue']['bets']}}</p>
+                    </div>
+                    <div class="flex-vertical">
+                        <p class="top">Mushrooms</p>
+                        <p class="bottom">{{stats['blue']['mushrooms']}}</p>
+                    </div>
                 </div>
             </div>
-
-            <p class="section-title">Red</p>
+            
             <div id="red-stats" class="flex-horizontal">
                 <div class="flex-vertical">
-                    <p class="top">Bets</p>
-                    <p class="bottom">{{stats['red']['bets']}}</p>
-                </div>
-                <div class="flex-vertical">
-                    <p class="top">Mushrooms</p>
-                    <p class="bottom">{{stats['red']['mushrooms']}}</p>
+                    <p class="section-title">Red</p>
+
+                    <div class="flex-vertical">
+                        <p class="top">Bets</p>
+                        <p class="bottom">{{stats['red']['bets']}}</p>
+                    </div>
+                    <div class="flex-vertical">
+                        <p class="top">Mushrooms</p>
+                        <p class="bottom">{{stats['red']['mushrooms']}}</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -61,17 +67,13 @@
 .flex-horizontal {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
-    flex-flow: row wrap;
-    align-items: stretch;
+    justify-content: center;
 }
 
 .flex-vertical {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    flex-flow: column wrap;
-    align-items: stretch;
+    justify-content: center;
 }
 
 body {
@@ -89,7 +91,7 @@ body * {
 
 div.container {
     width: 50%;
-    margin: 100px auto 0 auto;
+    margin: 150px auto 0 auto;
 }
 
 #header {
@@ -97,18 +99,19 @@ div.container {
     top: 0;
     right: 0;
     left: 0;
-    height: 60px;
+    height: 120px;
     background: var(--background-surface);
     box-shadow: 0 1px 5px #000;
+    text-align: center;
     z-index: 99999;
 }
 
 #tug-of-war {
     position: fixed;
-    top: 60px;
+    top: 120px;
     right: 0;
     left: 0;
-    height: 16px;
+    height: 14px;
     z-index: 1000;
 }
 
@@ -146,6 +149,8 @@ div.container {
 .section-title {
     padding: 0;
     font-weight: bold;
+    font-size: 1.5em;
+    text-align: center;
 }
 
 
