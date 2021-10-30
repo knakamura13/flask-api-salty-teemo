@@ -11,12 +11,12 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Global variables
 DATA_DICT = {}
-DATA_LOG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'liveDataCurrent.json')
+DATA_LOG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'live_data_log.json')
 
 # Read data from file
-with open(DATA_LOG_FILE, 'r') as f:
+with open(DATA_LOG_FILE, 'r') as in_file:
     try:
-        DATA_DICT = json.load(f)
+        DATA_DICT = json.load(in_file)
     except FileNotFoundError:
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), DATA_LOG_FILE)
 
@@ -67,7 +67,6 @@ def live_data():
                 DATA_DICT['live_stats']['red'] = stats['red']
             if 'total' in stats.keys():
                 DATA_DICT['live_stats']['total'] = stats['total']
-
         DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
         DATA_DICT['status'] = status
 
