@@ -26,11 +26,6 @@ def basic_error(err):
     return f'<h3>Oops, the Flask server crashed!</h3><p>{err}</p>', 501
 
 
-@app.route('/favicon.ico')
-def favicon():
-    return app.send_static_file('favicon.ico'), 200
-
-
 @app.route('/')
 def index():
     return jsonify({
