@@ -7,7 +7,7 @@ import json
 # Flask setup
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/kjnakamura/Documents/Development/pycharm-projects/flask-api-salty-teemo/stats.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/stats.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -15,14 +15,14 @@ db = SQLAlchemy(app)
 # DB schema definition
 class Stats(db.Model):
     """ DB Schema Initialization Example
-    >>> from app import db
-    >>> from app import Stats
-    >>> from datetime import datetime
-    >>> db.create_all()
-    >>> stats = Stats(betting_is_open=False, blue_bets=0, blue_mushrooms=0, red_bets=0, red_mushrooms=0, latest_update=datetime.now(), status_code=200)
-    >>> db.session.add(stats)
-    >>> db.session.commit()
-    >>> exit()
+    # >>> from app import db
+    # >>> from app import Stats
+    # >>> from datetime import datetime
+    # >>> db.create_all()
+    # >>> stats = Stats(betting_is_open=False, blue_bets=0, blue_mushrooms=0, red_bets=0, red_mushrooms=0, latest_update=datetime.now(), status_code=200)
+    # >>> db.session.add(stats)
+    # >>> db.session.commit()
+    # >>> exit()
     """
     id = db.Column(db.Integer, primary_key=True)
     betting_is_open = db.Column(db.Boolean, unique=False, nullable=False)
@@ -53,6 +53,16 @@ class Stats(db.Model):
             },
             "status_code": self.status_code
         })
+
+
+try:
+    db.create_all()
+    stats = Stats(betting_is_open=False, blue_bets=0, blue_mushrooms=0, red_bets=0, red_mushrooms=0,
+                  latest_update=datetime.now(), status_code=200)
+    db.session.add(stats)
+    db.session.commit()
+except Exception as e:
+    print(e)
 
 
 @app.errorhandler(Exception)
@@ -125,6 +135,9 @@ def live_data():
 
     # Commit changes to the DB
     db.session.commit()
+
+    print(request.method, status)
+    print(latest)
 
     # Return a JSON response
     return json.loads(latest.__repr__()), status
