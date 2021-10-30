@@ -2,21 +2,34 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import json
+import errno
+import os
 
 # Flask setup
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Global variables
-data = {}
-log_file = 'data/liveDataCurrent.json'
+DATA_DICT = {}
+DATA_LOG_FILE = 'data/liveDataCurrent.json'
 
 # Read data from file
-with open(log_file, 'r') as json_file:
+with open(DATA_LOG_FILE, 'r') as f:
     try:
-        data = json.load(json_file)
-    except Exception as e:
+        DATA_DICT = json.load(f)
+    except FileNotFoundError as e:
         pass
+
+
+@app.errorhandler(Exception)
+def basic_error(err):
+    return f'<h3>Oops, the Flask server crashed!</h3><p>{err}</p>', 501
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return app.send_static_file('favicon.ico'), 200
+
 
 @app.route('/')
 def index():
@@ -25,13 +38,15 @@ def index():
         "result": "Welcome to the unofficial Salty Teemo REST API!"
     })
 
+
 @app.route('/live')
 def test():
-    return render_template('live.html', stats=data['live_stats'])
+    return render_template('live.html', stats=DATA_DICT['live_stats'])
+
 
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():
-    global data, log_file
+    global DATA_DICT, DATA_LOG_FILE
 
     status = 500
 
@@ -45,60 +60,60 @@ def live_data():
         if 'live_stats' in req.keys():
             stats = req['live_stats']
             if 'betting_is_open' in stats.keys():
-                data['live_stats']['betting_is_open'] = stats['betting_is_open']
+                DATA_DICT['live_stats']['betting_is_open'] = stats['betting_is_open']
             if 'blue' in stats.keys():
-                data['live_stats']['blue'] = stats['blue']
+                DATA_DICT['live_stats']['blue'] = stats['blue']
             if 'red' in stats.keys():
-                data['live_stats']['red'] = stats['red']
+                DATA_DICT['live_stats']['red'] = stats['red']
             if 'total' in stats.keys():
-                data['live_stats']['total'] = stats['total']
+                DATA_DICT['live_stats']['total'] = stats['total']
 
-        data['live_stats']['latest_update'] = getCurrentDatetimeStr()
-        data['status'] = status
+        DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
+        DATA_DICT['status'] = status
 
         # Write json to file
-        with open(log_file, 'w+') as out_file:
-            json.dump(data, out_file)
+        with open(DATA_LOG_FILE, 'w+') as out_file:
+            json.dump(DATA_DICT, out_file)
 
-        return jsonify(data), status
+        return jsonify(DATA_DICT), status
 
     # POST requests
     elif request.method == 'POST':
         # Get the json from the POST request
         req = request.get_json(force=True)
-        data = req
+        DATA_DICT = req
         status = 201
 
-        data['status'] = status
+        DATA_DICT['status'] = status
 
-        data['live_stats']['latest_update'] = getCurrentDatetimeStr()
+        DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
 
         # Write json to file
-        with open(log_file, 'w+') as out_file:
-            json.dump(data, out_file)
+        with open(DATA_LOG_FILE, 'w+') as out_file:
+            json.dump(DATA_DICT, out_file)
 
         # Return the new data, indicating the POST was successful
-        return jsonify(data), status
+        return jsonify(DATA_DICT), status
 
     # GET requests
     elif request.method == 'GET':
         # Read data from file
-        with open(log_file, 'r+') as json_file:
+        with open(DATA_LOG_FILE, 'r+') as json_file:
             try:
-                data = json.load(json_file)
+                DATA_DICT = json.load(json_file)
             except Exception as e:
-                data['error'] = str(e)
+                DATA_DICT['error'] = str(e)
 
                 # Return an error with code 500
                 status = 500
-                return jsonify(data), status
+                return jsonify(DATA_DICT), status
 
         # Return the contents of the json file, indicating the GET was successful
         status = 200
-        return jsonify(data), status
+        return jsonify(DATA_DICT), status
 
 
-def getCurrentDatetimeStr():
+def get_datetime_str():
     now = datetime.now()
     formatted = now.strftime("%Y-%m-%d %H:%M:%S")
     return formatted
