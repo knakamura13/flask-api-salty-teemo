@@ -1,24 +1,58 @@
 from flask import Flask, jsonify, request, render_template
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 from datetime import datetime
 import json
-import errno
-import os
 
 # Flask setup
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://///Users/kjnakamura/Documents/Development/pycharm-projects/flask-api-salty-teemo/stats.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-# Global variables
-DATA_DICT = {}
-DATA_LOG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'live_data_log.json')
 
-# Read data from file
-with open(DATA_LOG_FILE, 'r') as initial_data_file:
-    try:
-        DATA_DICT = json.load(initial_data_file)
-    except FileNotFoundError:
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), DATA_LOG_FILE)
+# DB schema definition
+class Stats(db.Model):
+    """ DB Schema Initialization Example
+    >>> from app import db
+    >>> from app import Stats
+    >>> from datetime import datetime
+    >>> db.create_all()
+    >>> stats = Stats(betting_is_open=False, blue_bets=0, blue_mushrooms=0, red_bets=0, red_mushrooms=0, latest_update=datetime.now(), status_code=200)
+    >>> db.session.add(stats)
+    >>> db.session.commit()
+    >>> exit()
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    betting_is_open = db.Column(db.Boolean, unique=False, nullable=False)
+    blue_bets = db.Column(db.Integer, unique=False, nullable=False)
+    blue_mushrooms = db.Column(db.Integer, unique=False, nullable=False)
+    red_bets = db.Column(db.Integer, unique=False, nullable=False)
+    red_mushrooms = db.Column(db.Integer, unique=False, nullable=False)
+    latest_update = db.Column(db.String(30), unique=False, nullable=False)
+    status_code = db.Column(db.Integer, unique=False, nullable=False)
+
+    def __repr__(self):
+        return json.dumps({
+            "live_stats": {
+                "betting_is_open": self.betting_is_open,
+                "blue": {
+                    "bets": self.blue_bets,
+                    "mushrooms": self.blue_mushrooms
+                },
+                "red": {
+                    "bets": self.red_bets,
+                    "mushrooms": self.red_mushrooms
+                },
+                "total": {
+                    "bets": self.blue_bets + self.red_bets,
+                    "mushrooms": self.blue_mushrooms + self.red_mushrooms
+                },
+                "latest_update": self.latest_update
+            },
+            "status_code": self.status_code
+        })
 
 
 @app.errorhandler(Exception)
@@ -41,12 +75,14 @@ def index():
 
 @app.route('/live')
 def test():
-    return render_template('live.html', stats=DATA_DICT['live_stats'])
+    return render_template('live.html', stats=Stats.query.first())
 
 
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():
-    global DATA_DICT, DATA_LOG_FILE
+    # Load the data from the DB
+    latest = Stats.query.first()
+
     status = 500
 
     # PUT requests
@@ -54,54 +90,44 @@ def live_data():
         status = 201
 
         # Get the json from the PUT request
-        req = request.get_json(force=True)
+        put_data = request.get_json(force=True)['live_stats']
 
-        # Check each property to see what the PUT request is updating
-        if 'live_stats' in req.keys():
-            stats = req['live_stats']
-            if 'betting_is_open' in stats.keys():
-                DATA_DICT['live_stats']['betting_is_open'] = stats['betting_is_open']
-            if 'blue' in stats.keys():
-                DATA_DICT['live_stats']['blue'] = stats['blue']
-            if 'red' in stats.keys():
-                DATA_DICT['live_stats']['red'] = stats['red']
-            if 'total' in stats.keys():
-                DATA_DICT['live_stats']['total'] = stats['total']
-        DATA_DICT['status'] = status
-        DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
-
-        # Write json to file
-        with open(DATA_LOG_FILE, 'w+') as out_file:
-            json.dump(DATA_DICT, out_file)
-
+        # Replace each property that is set in the PUT request data
+        if 'live_stats' in put_data.keys():
+            if 'betting_is_open' in put_data.keys():
+                latest.betting_is_open = put_data['betting_is_open']
+            if 'blue' in put_data.keys():
+                latest.blue_bets = put_data['blue']['bets']
+                latest.blue_mushrooms = put_data['blue']['mushrooms']
+            if 'red' in put_data.keys():
+                latest.red_bets = put_data['red']['bets']
+                latest.red_mushrooms = put_data['red']['mushrooms']
     # POST requests
     elif request.method == 'POST':
         status = 201
 
         # Get the json from the POST request
-        req = request.get_json(force=True)
-        DATA_DICT = req
-        DATA_DICT['status'] = status
-        DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
+        post_data = request.get_json(force=True)['live_stats']
 
-        # Write json to file
-        with open(DATA_LOG_FILE, 'w+') as out_file:
-            json.dump(DATA_DICT, out_file)
-
+        # Replace all of the properties using the POST request data
+        latest.betting_is_open = post_data['betting_is_open']
+        latest.blue_bets = post_data['blue']['bets']
+        latest.blue_mushrooms = post_data['blue']['mushrooms']
+        latest.red_bets = post_data['red']['bets']
+        latest.red_mushrooms = post_data['red']['mushrooms']
     # GET requests
     elif request.method == 'GET':
         status = 200
 
-        # Read data from file
-        with open(DATA_LOG_FILE, 'r') as data_file:
-            try:
-                DATA_DICT = json.load(data_file)
-            except (FileNotFoundError, FileExistsError) as e:
-                status = 500
-                DATA_DICT['error'] = str(e)
-                return jsonify(DATA_DICT), status
+    # Apply final changes to the DB session
+    latest.status_code = status
+    latest.latest_update = get_datetime_str()
 
-    return jsonify(DATA_DICT), status
+    # Commit changes to the DB
+    db.session.commit()
+
+    # Return a JSON response
+    return json.loads(latest.__repr__()), status
 
 
 def get_datetime_str():

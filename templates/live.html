@@ -10,7 +10,7 @@
         <section id="header">
             <h1>Live Salty Teemo Stats</h1>
 
-            {% if stats['betting_is_open'] %}
+            {% if stats.betting_is_open %}
             <h3 id="open-status">Betting is OPEN</h3>
             {% else %}
             <h3 id="open-status">Betting is CLOSED</h3>
@@ -29,11 +29,11 @@
 
                     <div class="flex-vertical">
                         <p class="top">Bets</p>
-                        <p class="bottom">{{stats['blue']['bets']}}</p>
+                        <p class="bottom">{{stats.blue_bets}}</p>
                     </div>
                     <div class="flex-vertical">
                         <p class="top">Mushrooms</p>
-                        <p class="bottom">{{stats['blue']['mushrooms']}}</p>
+                        <p class="bottom">{{stats.blue_mushrooms}}</p>
                     </div>
                 </div>
             </div>
@@ -44,11 +44,11 @@
 
                     <div class="flex-vertical">
                         <p class="top">Bets</p>
-                        <p class="bottom">{{stats['red']['bets']}}</p>
+                        <p class="bottom">{{stats.red_bets}}</p>
                     </div>
                     <div class="flex-vertical">
                         <p class="top">Mushrooms</p>
-                        <p class="bottom">{{stats['red']['mushrooms']}}</p>
+                        <p class="bottom">{{stats.red_mushrooms}}</p>
                     </div>
                 </div>
             </div>
