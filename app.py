@@ -14,9 +14,9 @@ DATA_DICT = {}
 DATA_LOG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'live_data_log.json')
 
 # Read data from file
-with open(DATA_LOG_FILE, 'r') as in_file:
+with open(DATA_LOG_FILE, 'r') as initial_data_file:
     try:
-        DATA_DICT = json.load(in_file)
+        DATA_DICT = json.load(initial_data_file)
     except FileNotFoundError:
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), DATA_LOG_FILE)
 
@@ -74,7 +74,6 @@ def live_data():
         with open(DATA_LOG_FILE, 'w+') as out_file:
             json.dump(DATA_DICT, out_file)
 
-        return jsonify(DATA_DICT), status
     # POST requests
     elif request.method == 'POST':
         status = 201
@@ -89,19 +88,18 @@ def live_data():
         with open(DATA_LOG_FILE, 'w+') as out_file:
             json.dump(DATA_DICT, out_file)
 
-        # Return the new data, indicating the POST was successful
-        return jsonify(DATA_DICT), status
     # GET requests
     elif request.method == 'GET':
+        status = 200
+
         # Read data from file
-        with open(DATA_LOG_FILE, 'r') as json_file:
+        with open(DATA_LOG_FILE, 'r') as data_file:
             try:
-                DATA_DICT = json.load(json_file)
-            except Exception as e:
+                DATA_DICT = json.load(data_file)
+            except (FileNotFoundError, FileExistsError) as e:
                 status = 500
                 DATA_DICT['error'] = str(e)
                 return jsonify(DATA_DICT), status
-        status = 200
 
     return jsonify(DATA_DICT), status
 
