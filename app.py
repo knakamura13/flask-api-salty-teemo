@@ -11,14 +11,14 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Global variables
 DATA_DICT = {}
-DATA_LOG_FILE = 'data/liveDataCurrent.json'
+DATA_LOG_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'liveDataCurrent.json')
 
 # Read data from file
 with open(DATA_LOG_FILE, 'r') as f:
     try:
         DATA_DICT = json.load(f)
-    except FileNotFoundError as e:
-        pass
+    except FileNotFoundError:
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), DATA_LOG_FILE)
 
 
 @app.errorhandler(Exception)
@@ -28,7 +28,7 @@ def basic_error(err):
 
 @app.route('/favicon.ico')
 def favicon():
-    return app.send_static_file('favicon.ico'), 200
+    return app.send_static_file('images/favicon.ico'), 200
 
 
 @app.route('/')
