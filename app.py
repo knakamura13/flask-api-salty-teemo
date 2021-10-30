@@ -47,14 +47,14 @@ def test():
 @app.route('/live-data', methods=['GET', 'POST', 'PUT'])
 def live_data():
     global DATA_DICT, DATA_LOG_FILE
-
     status = 500
 
     # PUT requests
     if request.method == 'PUT':
+        status = 201
+
         # Get the json from the PUT request
         req = request.get_json(force=True)
-        status = 201
 
         # Check each property to see what the PUT request is updating
         if 'live_stats' in req.keys():
@@ -67,24 +67,22 @@ def live_data():
                 DATA_DICT['live_stats']['red'] = stats['red']
             if 'total' in stats.keys():
                 DATA_DICT['live_stats']['total'] = stats['total']
-        DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
         DATA_DICT['status'] = status
+        DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
 
         # Write json to file
         with open(DATA_LOG_FILE, 'w+') as out_file:
             json.dump(DATA_DICT, out_file)
 
         return jsonify(DATA_DICT), status
-
     # POST requests
     elif request.method == 'POST':
+        status = 201
+
         # Get the json from the POST request
         req = request.get_json(force=True)
         DATA_DICT = req
-        status = 201
-
         DATA_DICT['status'] = status
-
         DATA_DICT['live_stats']['latest_update'] = get_datetime_str()
 
         # Write json to file
@@ -93,26 +91,21 @@ def live_data():
 
         # Return the new data, indicating the POST was successful
         return jsonify(DATA_DICT), status
-
     # GET requests
     elif request.method == 'GET':
         # Read data from file
-        with open(DATA_LOG_FILE, 'r+') as json_file:
+        with open(DATA_LOG_FILE, 'r') as json_file:
             try:
                 DATA_DICT = json.load(json_file)
             except Exception as e:
-                DATA_DICT['error'] = str(e)
-
-                # Return an error with code 500
                 status = 500
+                DATA_DICT['error'] = str(e)
                 return jsonify(DATA_DICT), status
-
-        # Return the contents of the json file, indicating the GET was successful
         status = 200
-        return jsonify(DATA_DICT), status
+
+    return jsonify(DATA_DICT), status
 
 
 def get_datetime_str():
     now = datetime.now()
-    formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-    return formatted
+    return now.strftime("%Y-%m-%d %H:%M:%S")
