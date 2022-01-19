@@ -2,6 +2,17 @@
     <title>Live Stats</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        let stats = {
+            blue: {
+                mushrooms: {{stats.blue_mushrooms}}
+            },
+            red: {
+                mushrooms: {{stats.red_mushrooms}}
+            }
+        };
+    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/live_page_title_update.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/live.css') }}">
 </head>
 
@@ -33,7 +44,7 @@
                     </div>
                     <div class="flex-vertical">
                         <p class="top">Mushrooms</p>
-                        <p class="bottom">{{stats.blue_mushrooms}}</p>
+                        <p class="bottom" id="stats-blue-mushrooms">{{stats.blue_mushrooms}}</p>
                     </div>
                 </div>
             </div>
@@ -48,7 +59,7 @@
                     </div>
                     <div class="flex-vertical">
                         <p class="top">Mushrooms</p>
-                        <p class="bottom">{{stats.red_mushrooms}}</p>
+                        <p class="bottom" id="stats-red-mushrooms">{{stats.red_mushrooms}}</p>
                     </div>
                 </div>
             </div>

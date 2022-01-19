@@ -13,12 +13,12 @@ https://flask-api-salty-teemo.herokuapp.com
 
 **Sample requests**
 
-```
+```shell
 GET /live-data HTTP/1.1
 Host: flask-api-salty-teemo.herokuapp.com
 ```
 
-```
+```shell
 PUT /live-data HTTP/1.1
 Host: flask-api-salty-teemo.herokuapp.com
 Content-Type: application/json
@@ -43,7 +43,7 @@ Content-Length: 298
 }
 ```
 
-```
+```shell
 POST /live-data HTTP/1.1
 Host: flask-api-salty-teemo.herokuapp.com
 Content-Type: application/json

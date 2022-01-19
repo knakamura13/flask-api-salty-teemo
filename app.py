@@ -1,8 +1,8 @@
 from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS, cross_origin
 from datetime import datetime
 import json
+
 
 # Flask setup
 app = Flask(__name__)
@@ -119,7 +119,7 @@ def live_data():
         # Get the json from the POST request
         post_data = request.get_json(force=True)['live_stats']
 
-        # Replace all of the properties using the POST request data
+        # Replace all the properties using the POST request data
         latest.betting_is_open = post_data['betting_is_open']
         latest.blue_bets = post_data['blue']['bets']
         latest.blue_mushrooms = post_data['blue']['mushrooms']
